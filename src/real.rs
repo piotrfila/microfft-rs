@@ -8,12 +8,10 @@
 //! The produced output is the first half out the output returned by
 //! the corresponding `N`-point CFFT, i.e. the real DC value and
 //! `N/2 - 1` positive-frequency terms. Additionally, the real-valued
-//! coefficient at the Nyquist frequency is packed into the imaginary part
-//! of the DC bin. The negative-frequency terms
-//! are not computed, since they can be calculated from the
-//! positive-frequency terms and are therefore redundant.
-
-use core::convert::TryInto;
+//! coefficient at the Nyquist frequency is packed into the imaginary
+//! part of the DC bin. The negative-frequency terms are not computed,
+//! since they can be calculated from the positive-frequency terms and
+//! are therefore redundant.
 
 use crate::{rfft::*, Complex32};
 
@@ -24,12 +22,12 @@ use crate::{rfft::*, Complex32};
 /// ```
 /// use microfft::real::rfft_2;
 ///
-/// let mut input = [0.; 2];
-/// let result = rfft_2(&mut input);
+/// let input = [0.; 2];
+/// let result = rfft_2(input);
 /// ```
 #[inline]
-pub fn rfft_2(input: &mut [f32; 2]) -> &mut [Complex32; 1] {
-    RFftN2::transform(input).try_into().unwrap()
+pub fn rfft_2(input: [f32; 2]) -> [Complex32; 1] {
+    RFftN2::transform(input)
 }
 
 /// Perform an in-place 4-point RFFT.
@@ -39,12 +37,12 @@ pub fn rfft_2(input: &mut [f32; 2]) -> &mut [Complex32; 1] {
 /// ```
 /// use microfft::real::rfft_4;
 ///
-/// let mut input = [0.; 4];
-/// let result = rfft_4(&mut input);
+/// let input = [0.; 4];
+/// let result = rfft_4(input);
 /// ```
 #[inline]
-pub fn rfft_4(input: &mut [f32; 4]) -> &mut [Complex32; 2] {
-    RFftN4::transform(input).try_into().unwrap()
+pub fn rfft_4(input: [f32; 4]) -> [Complex32; 2] {
+    RFftN4::transform(input)
 }
 
 /// Perform an in-place 8-point RFFT.
@@ -54,8 +52,8 @@ pub fn rfft_4(input: &mut [f32; 4]) -> &mut [Complex32; 2] {
 /// ```
 /// use microfft::real::rfft_8;
 ///
-/// let mut input = [0.; 8];
-/// let result = rfft_8(&mut input);
+/// let input = [0.; 8];
+/// let result = rfft_8(input);
 /// ```
 #[cfg(any(
     feature = "maxn-8",
@@ -70,8 +68,8 @@ pub fn rfft_4(input: &mut [f32; 4]) -> &mut [Complex32; 2] {
     feature = "maxn-4096",
 ))]
 #[inline]
-pub fn rfft_8(input: &mut [f32; 8]) -> &mut [Complex32; 4] {
-    RFftN8::transform(input).try_into().unwrap()
+pub fn rfft_8(input: [f32; 8]) -> [Complex32; 4] {
+    RFftN8::transform(input)
 }
 
 /// Perform an in-place 16-point RFFT.
@@ -81,8 +79,8 @@ pub fn rfft_8(input: &mut [f32; 8]) -> &mut [Complex32; 4] {
 /// ```
 /// use microfft::real::rfft_16;
 ///
-/// let mut input = [0.; 16];
-/// let result = rfft_16(&mut input);
+/// let input = [0.; 16];
+/// let result = rfft_16(input);
 /// ```
 #[cfg(any(
     feature = "maxn-16",
@@ -96,8 +94,8 @@ pub fn rfft_8(input: &mut [f32; 8]) -> &mut [Complex32; 4] {
     feature = "maxn-4096",
 ))]
 #[inline]
-pub fn rfft_16(input: &mut [f32; 16]) -> &mut [Complex32; 8] {
-    RFftN16::transform(input).try_into().unwrap()
+pub fn rfft_16(input: [f32; 16]) -> [Complex32; 8] {
+    RFftN16::transform(input)
 }
 
 /// Perform an in-place 32-point RFFT.
@@ -107,8 +105,8 @@ pub fn rfft_16(input: &mut [f32; 16]) -> &mut [Complex32; 8] {
 /// ```
 /// use microfft::real::rfft_32;
 ///
-/// let mut input = [0.; 32];
-/// let result = rfft_32(&mut input);
+/// let input = [0.; 32];
+/// let result = rfft_32(input);
 /// ```
 #[cfg(any(
     feature = "maxn-32",
@@ -121,8 +119,8 @@ pub fn rfft_16(input: &mut [f32; 16]) -> &mut [Complex32; 8] {
     feature = "maxn-4096",
 ))]
 #[inline]
-pub fn rfft_32(input: &mut [f32; 32]) -> &mut [Complex32; 16] {
-    RFftN32::transform(input).try_into().unwrap()
+pub fn rfft_32(input: [f32; 32]) -> [Complex32; 16] {
+    RFftN32::transform(input)
 }
 
 /// Perform an in-place 64-point RFFT.
@@ -132,8 +130,8 @@ pub fn rfft_32(input: &mut [f32; 32]) -> &mut [Complex32; 16] {
 /// ```
 /// use microfft::real::rfft_64;
 ///
-/// let mut input = [0.; 64];
-/// let result = rfft_64(&mut input);
+/// let input = [0.; 64];
+/// let result = rfft_64(input);
 /// ```
 #[cfg(any(
     feature = "maxn-64",
@@ -145,8 +143,8 @@ pub fn rfft_32(input: &mut [f32; 32]) -> &mut [Complex32; 16] {
     feature = "maxn-4096",
 ))]
 #[inline]
-pub fn rfft_64(input: &mut [f32; 64]) -> &mut [Complex32; 32] {
-    RFftN64::transform(input).try_into().unwrap()
+pub fn rfft_64(input: [f32; 64]) -> [Complex32; 32] {
+    RFftN64::transform(input)
 }
 
 /// Perform an in-place 128-point RFFT.
@@ -156,8 +154,8 @@ pub fn rfft_64(input: &mut [f32; 64]) -> &mut [Complex32; 32] {
 /// ```
 /// use microfft::real::rfft_128;
 ///
-/// let mut input = [0.; 128];
-/// let result = rfft_128(&mut input);
+/// let input = [0.; 128];
+/// let result = rfft_128(input);
 /// ```
 #[cfg(any(
     feature = "maxn-128",
@@ -168,8 +166,8 @@ pub fn rfft_64(input: &mut [f32; 64]) -> &mut [Complex32; 32] {
     feature = "maxn-4096",
 ))]
 #[inline]
-pub fn rfft_128(input: &mut [f32; 128]) -> &mut [Complex32; 64] {
-    RFftN128::transform(input).try_into().unwrap()
+pub fn rfft_128(input: [f32; 128]) -> [Complex32; 64] {
+    RFftN128::transform(input)
 }
 
 /// Perform an in-place 256-point RFFT.
@@ -179,8 +177,8 @@ pub fn rfft_128(input: &mut [f32; 128]) -> &mut [Complex32; 64] {
 /// ```
 /// use microfft::real::rfft_256;
 ///
-/// let mut input = [0.; 256];
-/// let result = rfft_256(&mut input);
+/// let input = [0.; 256];
+/// let result = rfft_256(input);
 /// ```
 #[cfg(any(
     feature = "maxn-256",
@@ -190,8 +188,8 @@ pub fn rfft_128(input: &mut [f32; 128]) -> &mut [Complex32; 64] {
     feature = "maxn-4096",
 ))]
 #[inline]
-pub fn rfft_256(input: &mut [f32; 256]) -> &mut [Complex32; 128] {
-    RFftN256::transform(input).try_into().unwrap()
+pub fn rfft_256(input: [f32; 256]) -> [Complex32; 128] {
+    RFftN256::transform(input)
 }
 
 /// Perform an in-place 512-point RFFT.
@@ -201,8 +199,8 @@ pub fn rfft_256(input: &mut [f32; 256]) -> &mut [Complex32; 128] {
 /// ```
 /// use microfft::real::rfft_512;
 ///
-/// let mut input = [0.; 512];
-/// let result = rfft_512(&mut input);
+/// let input = [0.; 512];
+/// let result = rfft_512(input);
 /// ```
 #[cfg(any(
     feature = "maxn-512",
@@ -211,8 +209,8 @@ pub fn rfft_256(input: &mut [f32; 256]) -> &mut [Complex32; 128] {
     feature = "maxn-4096",
 ))]
 #[inline]
-pub fn rfft_512(input: &mut [f32; 512]) -> &mut [Complex32; 256] {
-    RFftN512::transform(input).try_into().unwrap()
+pub fn rfft_512(input: [f32; 512]) -> [Complex32; 256] {
+    RFftN512::transform(input)
 }
 
 /// Perform an in-place 1024-point RFFT.
@@ -222,13 +220,13 @@ pub fn rfft_512(input: &mut [f32; 512]) -> &mut [Complex32; 256] {
 /// ```
 /// use microfft::real::rfft_1024;
 ///
-/// let mut input = [0.; 1024];
-/// let result = rfft_1024(&mut input);
+/// let input = [0.; 1024];
+/// let result = rfft_1024(input);
 /// ```
 #[cfg(any(feature = "maxn-1024", feature = "maxn-2048", feature = "maxn-4096"))]
 #[inline]
-pub fn rfft_1024(input: &mut [f32; 1024]) -> &mut [Complex32; 512] {
-    RFftN1024::transform(input).try_into().unwrap()
+pub fn rfft_1024(input: [f32; 1024]) -> [Complex32; 512] {
+    RFftN1024::transform(input)
 }
 
 /// Perform an in-place 2048-point RFFT.
@@ -238,13 +236,13 @@ pub fn rfft_1024(input: &mut [f32; 1024]) -> &mut [Complex32; 512] {
 /// ```
 /// use microfft::real::rfft_2048;
 ///
-/// let mut input = [0.; 2048];
-/// let result = rfft_2048(&mut input);
+/// let input = [0.; 2048];
+/// let result = rfft_2048(input);
 /// ```
 #[cfg(any(feature = "maxn-2048", feature = "maxn-4096"))]
 #[inline]
-pub fn rfft_2048(input: &mut [f32; 2048]) -> &mut [Complex32; 1024] {
-    RFftN2048::transform(input).try_into().unwrap()
+pub fn rfft_2048(input: [f32; 2048]) -> [Complex32; 1024] {
+    RFftN2048::transform(input)
 }
 
 /// Perform an in-place 4096-point RFFT.
@@ -254,11 +252,11 @@ pub fn rfft_2048(input: &mut [f32; 2048]) -> &mut [Complex32; 1024] {
 /// ```
 /// use microfft::real::rfft_4096;
 ///
-/// let mut input = [0.; 4096];
-/// let result = rfft_4096(&mut input);
+/// let input = [0.; 4096];
+/// let result = rfft_4096(input);
 /// ```
 #[cfg(any(feature = "maxn-4096"))]
 #[inline]
-pub fn rfft_4096(input: &mut [f32; 4096]) -> &mut [Complex32; 2048] {
-    RFftN4096::transform(input).try_into().unwrap()
+pub fn rfft_4096(input: [f32; 4096]) -> [Complex32; 2048] {
+    RFftN4096::transform(input)
 }

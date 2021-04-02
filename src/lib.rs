@@ -8,7 +8,7 @@
 //! In addition to the standard FFT implementation on [`Complex32`] values
 //! ([`complex`]), an implementation working on real (`f32`) input values is
 //! provided ([`real`]). An `N`-point RFFT internally computes an `N/2`-point
-//! CFFT, making it roughly twice as fast a the complex variant.
+//! CFFT, making it roughly twice as fast as the complex variant.
 //!
 //! # Example
 //!
@@ -26,7 +26,7 @@
 //!
 //! // compute the RFFT of the samples
 //! let mut samples: [_; 16] = samples.try_into().unwrap();
-//! let spectrum = microfft::real::rfft_16(&mut samples);
+//! let mut spectrum = microfft::real::rfft_16(samples);
 //! // since the real-valued coefficient at the Nyquist frequency is packed into the
 //! // imaginary part of the DC bin, it must be cleared before computing the amplitudes
 //! spectrum[0].im = 0.0;

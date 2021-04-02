@@ -10,12 +10,11 @@ pub(crate) trait CFft {
     const BITREV_TABLE: &'static [u16] = tables::BITREV[Self::LOG2_N];
 
     #[inline]
-    fn transform(x: &mut [Complex32]) -> &mut [Complex32] {
+    fn transform_slice(x: &mut [Complex32]) {
         debug_assert_eq!(x.len(), Self::N);
 
         Self::bit_reverse_reorder(x);
         Self::compute_butterflies(x);
-        x
     }
 
     #[cfg(feature = "bitrev-tables")]
@@ -137,6 +136,14 @@ impl CFft for CFftN2 {
     }
 }
 
+impl CFftN2 {
+    #[inline]
+    pub(crate) fn transform(mut x: [Complex32; 2]) -> [Complex32; 2] {
+        Self::transform_slice(&mut x);
+        x
+    }
+}
+
 macro_rules! cfft_impls {
     ( $( $I:expr => ($N:expr, $CFftN:ident, $Half:ident), )* ) => {
         $(
@@ -148,6 +155,14 @@ macro_rules! cfft_impls {
 
                 const N: usize = $N;
                 const LOG2_N: usize = $I;
+            }
+
+            impl $CFftN {
+                #[inline]
+                pub(crate) fn transform(mut x: [Complex32; $N]) -> [Complex32; $N] {
+                    Self::transform_slice(&mut x);
+                    x
+                }
             }
         )*
     };

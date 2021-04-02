@@ -1,5 +1,5 @@
 use crate::{cfft::*, tables, Complex32};
-use core::slice;
+use core::mem;
 use static_assertions::{assert_eq_align, assert_eq_size};
 
 pub(crate) trait RFft {
@@ -8,25 +8,11 @@ pub(crate) trait RFft {
     const N: usize = Self::CFft::N * 2;
 
     #[inline]
-    fn transform(x: &mut [f32]) -> &mut [Complex32] {
-        debug_assert_eq!(x.len(), Self::N);
+    fn transform_slice(x: &mut [Complex32]) {
+        debug_assert_eq!(x.len(), Self::CFft::N);
 
-        let x = Self::pack_complex(x);
-
-        Self::CFft::transform(x);
+        Self::CFft::transform_slice(x);
         Self::recombine(x);
-        x
-    }
-
-    #[inline]
-    fn pack_complex(x: &mut [f32]) -> &mut [Complex32] {
-        assert_eq_size!(Complex32, [f32; 2]);
-        assert_eq_align!(Complex32, f32);
-        assert_eq!(x.len(), Self::N);
-
-        let len = Self::N / 2;
-        let data = x.as_mut_ptr().cast::<Complex32>();
-        unsafe { slice::from_raw_parts_mut(data, len) }
     }
 
     #[inline]
@@ -68,6 +54,7 @@ pub(crate) trait RFft {
     }
 }
 
+
 pub(crate) struct RFftN2;
 
 impl RFft for RFftN2 {
@@ -85,6 +72,22 @@ impl RFft for RFftN2 {
     }
 }
 
+impl RFftN2 {
+    #[inline]
+    pub(crate) fn transform(x: [f32; 2]) -> [Complex32; 1] {
+        let mut x = Self::pack_complex(x);
+        Self::transform_slice(&mut x);
+        x
+    }
+
+    #[inline]
+    fn pack_complex(x: [f32; 2]) -> [Complex32; 1] {
+        assert_eq_size!([f32; 2], [Complex32; 1]);
+        assert_eq_align!([f32; 2], [Complex32; 1]);
+        unsafe { mem::transmute(x) }
+    }
+}
+
 macro_rules! rfft_impls {
     ( $( ($RFftN:ident, $CFftN:ident), )* ) => {
         $(
@@ -93,6 +96,22 @@ macro_rules! rfft_impls {
 
             impl RFft for $RFftN {
                 type CFft = $CFftN;
+            }
+
+            impl $RFftN {
+                #[inline]
+                pub(crate) fn transform(x: [f32; $RFftN::N]) -> [Complex32; $CFftN::N] {
+                    let mut x = Self::pack_complex(x);
+                    Self::transform_slice(&mut x);
+                    x
+                }
+
+                #[inline]
+                fn pack_complex(x: [f32; $RFftN::N]) -> [Complex32; $CFftN::N] {
+                    assert_eq_size!([f32; $RFftN::N], [Complex32; $CFftN::N]);
+                    assert_eq_align!([f32; $RFftN::N], [Complex32; $CFftN::N]);
+                    unsafe { mem::transmute(x) }
+                }
             }
         )*
     };

@@ -45,10 +45,10 @@ macro_rules! cfft_tests {
                     .collect();
 
                 let expected = rust_fft(&input);
-                let mut input: [_; $N] = input.try_into().unwrap();
-                let result = microfft::complex::$name(&mut input);
+                let input: [_; $N] = input.try_into().unwrap();
+                let result = microfft::complex::$name(input);
 
-                assert_approx_eq(result, &expected);
+                assert_approx_eq(&result, &expected);
             }
         )*
     };
@@ -77,17 +77,17 @@ macro_rules! rfft_tests {
                 let input: Vec<_> = (5..($N+5)).map(|i| i as f32).collect();
                 let input_c: Vec<_> = input.iter().map(|f| Complex32::new(*f, 0.)).collect();
 
-                let mut input_c: [_; $N] = input_c.try_into().unwrap();
-                let expected = microfft::complex::$cfft_name(&mut input_c);
-                let mut input: [_; $N] = input.try_into().unwrap();
-                let result = microfft::real::$name(&mut input);
+                let input_c: [_; $N] = input_c.try_into().unwrap();
+                let expected = microfft::complex::$cfft_name(input_c);
+                let input: [_; $N] = input.try_into().unwrap();
+                let mut result = microfft::real::$name(input);
                 // The real-valued coefficient at the Nyquist frequency
                 // is packed into the imaginary part of the DC bin.
                 let coeff_at_nyquist = result[0].im;
                 assert_eq!(coeff_at_nyquist, expected[$N / 2].re);
                 // Clear this value before checking the results.
                 result[0].im = 0.0;
-                assert_approx_eq(result, &expected[..($N / 2)]);
+                assert_approx_eq(&result, &expected[..($N / 2)]);
             }
         )*
     };

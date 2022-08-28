@@ -3,8 +3,8 @@
 This code is used to run benchmarks on an embedded ARM Cortex-M4 system,
 specifically the [STM32F3DISCOVERY][1] board.
 
-It measures the number of CPU cycles required to compute both complex and real
-FFTs of all sizes supported by microfft.
+It measures the number of CPU cycles required to compute complex, real, and
+inverse FFTs of sizes up to 4096.
 
 As a point of comparison, the same benchmarks were originally also performed
 against the [Fourier crate][2] which, at that time, was the only other Rust FFT
@@ -25,24 +25,24 @@ The results are printed to stdout.
 
 ## Results
 
-The following table lists the `microfft` benchmark results from 2021-04-03
+The following table lists the `microfft` benchmark results from 2022-08-28
 together with the `fourier` benchmark results from 2020-03-08.
 
 Measurements are in CPU cycles, so lower is better.
 
-| FFT size | microfft (CFFT) | microfft (RFFT) | Fourier (CFFT) |
-| -------: | --------------: | --------------: | -------------: |
-|    **4** |              69 |              12 |            564 |
-|    **8** |             199 |             131 |          1,462 |
-|   **16** |             718 |             369 |          2,202 |
-|   **32** |           2,320 |           1,200 |          4,173 |
-|   **64** |           6,249 |           3,340 |         10,943 |
-|  **128** |          15,734 |           8,588 |         20,904 |
-|  **256** |          37,775 |          20,234 |         42,724 |
-|  **512** |          89,758 |          47,708 |         97,380 |
-| **1024** |         207,317 |         108,527 |          s/o\* |
-| **2048** |         467,198 |         242,356 |          s/o\* |
-| **4096** |       1,028,211 |         530,090 |          s/o\* |
+| FFT size | CFFT      | IFFT      | RFFT    | Fourier (CFFT) |
+| -------: | --------: | --------: | ------: |--------------: |
+|    **4** |        66 |        87 |      12 |            564 |
+|    **8** |       198 |       239 |     129 |          1,462 |
+|   **16** |       774 |       891 |     359 |          2,202 |
+|   **32** |     2,296 |     2,890 |   1,142 |          4,173 |
+|   **64** |     6,177 |     7,385 |   3,325 |         10,943 |
+|  **128** |    15,659 |    17,847 |   8,288 |         20,904 |
+|  **256** |    37,477 |    42,218 |  19,761 |         42,724 |
+|  **512** |    89,804 |    98,817 |  47,695 |         97,380 |
+| **1024** |   205,261 |   221,592 | 106,855 |          s/o\* |
+| **2048** |   453,973 |   491,902 | 238,003 |          s/o\* |
+| **4096** | 1,006,152 | 1,076,565 | 524,283 |          s/o\* |
 
 \* FFT cannot be computed due to stack overflow.
 

@@ -50,6 +50,8 @@ def run_benches():
     for i in range(2, 13):
         run_bench("microfft-c", 2 ** i)
     for i in range(2, 13):
+        run_bench("microfft-i", 2 ** i)
+    for i in range(2, 13):
         run_bench("microfft-r", 2 ** i)
 
 

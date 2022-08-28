@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file.
 
+## 0.5.1 (unreleased)
+
+### Added
+
+- Support for inverse FFTs.
+
+
 ## 0.5.0 (2022-06-19)
 
 ### Changed

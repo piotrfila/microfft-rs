@@ -1,7 +1,8 @@
 use std::convert::TryInto;
 
 use microfft::Complex32;
-use rustfft::{algorithm::Radix4, Fft, FftDirection};
+use rustfft::algorithm::Radix4;
+use rustfft::{Fft, FftDirection};
 
 fn rust_fft(input: &[Complex32]) -> Vec<Complex32> {
     // Convert to rustfft's `num_complex` types, to prevent issues with
@@ -20,7 +21,8 @@ fn rust_fft(input: &[Complex32]) -> Vec<Complex32> {
 fn approx_eq(a: Complex32, b: Complex32) -> bool {
     fn approx_f32(x: f32, y: f32) -> bool {
         let diff = (x - y).abs();
-        let rel_diff = if x != 0. { (diff / x).abs() } else { diff };
+        let x_abs = x.abs();
+        let rel_diff = if x_abs > 1. { diff / x_abs } else { diff };
         rel_diff < 0.05
     }
 
@@ -69,6 +71,44 @@ cfft_tests! {
     cfft_4096: 4096,
     cfft_8192: 8192,
     cfft_16384: 16384,
+}
+
+macro_rules! ifft_tests {
+    ( $( $name:ident: ($N:expr, $cfft_name:ident), )* ) => {
+        $(
+            #[test]
+            fn $name() {
+                let input: Vec<_> = (0..$N)
+                    .map(|i| i as f32)
+                    .map(|f| Complex32::new(f, f))
+                    .collect();
+                let mut input: [_; $N] = input.try_into().unwrap();
+                let expected = input.clone();
+
+                let transformed = microfft::complex::$cfft_name(&mut input);
+                let inversed = microfft::inverse::$name(transformed);
+
+                assert_approx_eq(inversed, &expected);
+            }
+        )*
+    };
+}
+
+ifft_tests! {
+    ifft_2: (2, cfft_2),
+    ifft_4: (4, cfft_4),
+    ifft_8: (8, cfft_8),
+    ifft_16: (16, cfft_16),
+    ifft_32: (32, cfft_32),
+    ifft_64: (64, cfft_64),
+    ifft_128: (128, cfft_128),
+    ifft_256: (256, cfft_256),
+    ifft_512: (512, cfft_512),
+    ifft_1024: (1024, cfft_1024),
+    ifft_2048: (2048, cfft_2048),
+    ifft_4096: (4096, cfft_4096),
+    ifft_8192: (8192, cfft_8192),
+    ifft_16384: (16384, cfft_16384),
 }
 
 macro_rules! rfft_tests {

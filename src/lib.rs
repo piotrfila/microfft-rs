@@ -5,10 +5,12 @@
 //! additional allocations. This makes microfft suitable for `no_std`
 //! environments.
 //!
-//! In addition to the standard FFT implementation on [`Complex32`] values
-//! ([`complex`]), an implementation working on real (`f32`) input values is
-//! provided ([`real`]). An `N`-point RFFT internally computes an `N/2`-point
-//! CFFT, making it roughly twice as fast as the complex variant.
+//! This crate provides three FFT implementations:
+//!  * [`complex`]: FFT on [`Complex32`] input values (CFFT).
+//!  * [`real`]: FFT on real (`f32`) input values (RFFT). An `N`-point RFFT
+//!    internally computes an `N/2`-point CFFT, making it roughly twice as fast
+//!    as the complex variant.
+//!  * [`inverse`]: Inverse FFT (IFFT), implemented in terms of a CFFT.
 //!
 //! # Example
 //!
@@ -37,6 +39,7 @@
 //! ```
 //!
 //! [`complex`]: complex/index.html
+//! [`inverse`]: inverse/index.html
 //! [`real`]: real/index.html
 //! [`Complex32`]: type.Complex32.html
 
@@ -45,12 +48,14 @@
 #![warn(rust_2018_idioms)]
 
 pub mod complex;
+pub mod inverse;
 pub mod real;
 
 pub use num_complex::Complex32;
 
 mod impls {
     pub(crate) mod cfft;
+    pub(crate) mod ifft;
     pub(crate) mod rfft;
 }
 mod tables;
